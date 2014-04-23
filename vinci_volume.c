@@ -20,6 +20,7 @@
 /****************************************************************************************/
 
 #include "vinci.h"
+#include "mex.h"
 
 /* global variables for C&H-triangulation and orthonormalisation */
 
