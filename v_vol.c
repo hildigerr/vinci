@@ -1,9 +1,7 @@
 #include "mex.h"
-//#include "vinci.h"
+#include "vinci.h"
 
-#include "vinci_lass.c"
-
-void mexFunction( int nlhs, mxArray *plhs[], 
+void mexFunction( int nlhs, mxArray *plhs[],
 		  int nrhs, const mxArray *prhs[] )
 {
 	int mrows, ncols;
@@ -30,7 +28,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 	/* Set up the return argument matrix */
 	plhs[0] = mxCreateDoubleMatrix(1,1, mxREAL);
-	
+
 	/* The output goes in *volume */
 	volume = mxGetPr(plhs[0]);
 
@@ -41,7 +39,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	G_m = mrows;
 	G_d = ncols - 1;
 	create_hyperplanes (); // allocates space for hyperplanes
-	
+
 	/* needs to be changed to read data from the array, or use the array(better) */
 	k=0;
 	for (i = 0; i < G_m; i++)
@@ -65,14 +63,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
          //{  G_Hyperplanes [i] [j] = matrix[k++];
          //   /*G_Hyperplanes [i] [j] = - G_Hyperplanes [i] [j];*/
          //}
-    
-    
-    
+
+
+
 	if (G_Storage > G_d - 3)
 	  G_Storage = G_d - 3;
 	  /* necessary to prevent memory waste because in the tree arrays of length */
 	  /* G_Storage + 2 are allocated                                          */
-	
+
 	pivotrow = (rational *) my_malloc ((G_d + 1) * sizeof (rational));
 	All_index = (T_LassInt *) my_malloc ((G_m + 1) * sizeof (T_LassInt));
 	Pivot = (T_LassInt *) my_malloc ((G_d + 1) * sizeof (T_LassInt));

@@ -342,6 +342,8 @@ void volume_lrs_file (rational *volume, char *rational_volume, char *vertexfile)
 /****************************************************************************************/
 
 void volume_lasserre_file (rational *volume, char *planesfile);
+static rational * compact();
+static rational lass(rational *A, int LastPlane_, int d);
 
 /****************************************************************************************/
 /*                   functions and procedures from 'vinci_screen'                       */
