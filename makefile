@@ -37,3 +37,7 @@ vinci_lass.o : vinci.h vinci_lass.c
 	
 clean :
 	rm *.o
+
+
+#with_matlab:
+#	mex v_vol.c vinci_global.c vinci_memory.c vinci_set.c vinci_lass.c vinci_file.c
