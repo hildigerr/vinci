@@ -8,6 +8,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	int        i, j, k;
 	double 	*volume;
 	double	*matrix;
+    extern rational *pivotrow;
+    extern T_LassInt *All_index;
+    extern T_LassInt *Pivot;
+    extern int **p2c;
+    extern rational *A;
+    extern rational  * planescopy;
+    extern T_Tree  *tree_volumes;
+    extern T_Key key;
 
 	/* Check for proper number of arguments. */
 	if (nrhs != 1)
@@ -38,7 +46,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	/* Set global variables */
 	G_m = mrows;
 	G_d = ncols - 1;
-	create_hyperplanes (); // allocates space for hyperplanes
+	create_hyperplanes (); /* allocates space for hyperplanes */
 
 	/* needs to be changed to read data from the array, or use the array(better) */
 	k=0;
@@ -58,13 +66,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	{
 		G_Hyperplanes [i] [2] = -matrix[k++];
 	}
-
-         //for (j = 0; j < G_d; j++)
-         //{  G_Hyperplanes [i] [j] = matrix[k++];
-         //   /*G_Hyperplanes [i] [j] = - G_Hyperplanes [i] [j];*/
-         //}
-
-
 
 	if (G_Storage > G_d - 3)
 	  G_Storage = G_d - 3;
@@ -88,7 +89,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	Pivot[0]=G_m+2;	/* initialization (end mark) */
 	*volume = lass (A, G_m-1, G_d);
 
-	/* Deallocate memory */ // didn't work
+	/* Deallocate memory (didn't work?)*/
 	free_key (key, KEY_PLANES_VAR);
 	my_free(planescopy, G_m*(G_d+1)*sizeof(rational));
 	my_free(A, G_m*(G_d+1)*sizeof(rational));

@@ -145,7 +145,7 @@ int method_proposal (int ext, int ine, boolean lrs, int d, int m, int n)
       return NONE;
    }
 
-      if (files_count == 1 && ext != NONE && !(lrs && ext != REAL_T))
+      if (files_count == 1 && ext != NONE && !(lrs && ext != REA_T))
    {  printf ("\nActually no method can be applied; please install lrs or create the .ine");
       printf ("\nfile.\n");
       return NONE;
@@ -162,7 +162,7 @@ int method_proposal (int ext, int ine, boolean lrs, int d, int m, int n)
       }
       else
       {
-         if (lrs && ext != REAL_T)
+         if (lrs && ext != REA_T)
             printf ("\n- lrs, if the origin is in the interior of the polytope");
       }
    else
@@ -171,7 +171,7 @@ int method_proposal (int ext, int ine, boolean lrs, int d, int m, int n)
       printf ("\n- rch");
       if (lrs)
          printf ("\n- lawd");
-      if (lrs && ext != REAL_T)
+      if (lrs && ext != REA_T)
          printf ("\n- lrs, if the origin is in the interior of the polytope");
    }
 
@@ -210,7 +210,7 @@ boolean method_test (int method, int ext, int ine, boolean lrs, int d, int m, in
    {
    case LRS:
       if (lrs && ext != NONE)
-         if (ext != REAL_T)
+         if (ext != REA_T)
          {  printf ("\nWARNING: The method 'lrs' only works if the polytope interior contains the");
             printf ("\norigin; otherwise the computed volume will be wrong!");
          }
@@ -289,7 +289,7 @@ boolean method_test (int method, int ext, int ine, boolean lrs, int d, int m, in
       break;
    case LAWD:
       if (lrs && ine != NONE)
-      {  if (ine == REAL_T)
+      {  if (ine == REA_T)
          {  printf ("\n'lawd' can only be used for integer or rational data, not for floating");
             printf ("\npoint data.");
             ok = FALSE;

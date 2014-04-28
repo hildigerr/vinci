@@ -43,13 +43,13 @@ rational *pivotrow;             /* copy of pivot row */
 T_LassInt *All_index;  /* All eliminated and superfluous indices (sorted) */
 T_LassInt *Pivot;      /* All substituted variables (sorted) */
 int **p2c;        /* pivot to constraints: which variable is fixed in which constraint;
-                     the variable index is given in the leading column, the constraint 
+                     the variable index is given in the leading column, the constraint
 		     index in the second */
 
 rational  * planescopy;               /* needed in shift_P in the lasserre-code */
-static T_Key   key, *keyfound;    /* key for storing the actually considered face and   */
+T_Key   key, *keyfound;    /* key for storing the actually considered face and   */
                                   /* found key when a volume could be retrieved */
-static T_Tree  *tree_volumes;     /* tree for storing intermediate volumes */
+T_Tree  *tree_volumes;     /* tree for storing intermediate volumes */
 
 
 /***************/
@@ -57,7 +57,7 @@ static T_Tree  *tree_volumes;     /* tree for storing intermediate volumes */
 /***************/
 
 
-static T_LassInt add_reduced_index(T_LassInt red, T_LassInt * indices, 
+static T_LassInt add_reduced_index(T_LassInt red, T_LassInt * indices,
                                  T_LassInt * ref_indices)
 /* insert new index into ref_indices maintaining sorting; if indices!=NULL this index
    is also inserted into indices. returns the original index base.
@@ -65,9 +65,9 @@ static T_LassInt add_reduced_index(T_LassInt red, T_LassInt * indices,
 
 { register int i;
   T_LassInt xch, base;
-    
+
   for (i=0; red>=ref_indices[i]; i++) red++;  /* reduced index -> original index */
-  base=red;  
+  base=red;
   while (ref_indices[i]<=G_m) {
       xch=ref_indices[i];
       ref_indices[i]=red;
@@ -119,7 +119,7 @@ static void del_original(T_LassInt base, T_LassInt * indices)
       exit(0);
   };
   for (;indices[i]<=G_m;i++) indices[i]=indices[i+1];
-}  
+}
 
 
 static void rm_original_inElAll_index(T_LassInt baserow)
@@ -130,7 +130,7 @@ static void rm_original_inElAll_index(T_LassInt baserow)
 static void rm_constraint(rational* A, int *LastPlane_, int d, int rm_index)
 /* removes the constraints given in rm_index and adjusts *LastPlane */
 
-{   register rational *p1, *p2; 
+{   register rational *p1, *p2;
     register int i;
 
     p1=A+rm_index*(d+1);
@@ -144,13 +144,13 @@ static void rm_constraint(rational* A, int *LastPlane_, int d, int rm_index)
 }
 
 
-static rational * compact()
+rational * compact()
 {   register int i, j;
     register rational *po,*pc;
 
     if (!(pc = (rational *) my_malloc (G_m*(G_d+1)*sizeof(rational)))) {
 	fprintf (stderr, "\n***** ERROR: Out of memory in 'compact.*pc'");
-	exit(0); 
+	exit(0);
     }
     po=pc;
     for (i=0; i<G_m; i++) {
@@ -187,9 +187,9 @@ static void shift_P(rational *A, int LastPlane_, int d)
     #endif
 
     if (pivot == NULL) pivot = create_int_vector (G_d + 1);
-    
+
     p1=A;                         /* search pivot of first column */
-    pivot[0]=0; 
+    pivot[0]=0;
     d3=fabs(d1=*p1);
     for (i=0; i<=LastPlane_; i++) {
         d2=fabs(*p1);
@@ -200,11 +200,11 @@ static void shift_P(rational *A, int LastPlane_, int d)
 	p1+=(d+1);
     }
     /* copy pivot row into planescopy */
-    p1=A+pivot[0]*(d+1)+1;   
+    p1=A+pivot[0]*(d+1)+1;
     p2=planescopy+pivot[0]*(d+1)+1;
     for (i=1,d2=1.0/d1; i<=d; i++,p1++,p2++) *p2 = (*p1)*d2;
     /* complete first pivoting and copying */
-    p1=A+1;                          
+    p1=A+1;
     p2=planescopy+1;
     for (i=0; i<=LastPlane_; i++, p1++, p2++) {
 	if (i==pivot[0]) {
@@ -212,29 +212,29 @@ static void shift_P(rational *A, int LastPlane_, int d)
 	    p2+=d;
 	    continue;   /* pivot row already done */
 	}
-	d1=*(p1-1); 
+	d1=*(p1-1);
 	p3=planescopy+pivot[0]*(d+1)+1;
 	for (j=1; j<=d; j++, p1++, p2++, p3++) (*p2)=(*p1)-d1*(*p3);
     }
-    
+
     /* subsequent elimination below */
-  
+
     for (col=1;col<d;col++) {
 	for (i=0;i<=LastPlane_;i++)       /* search first row not already used as pivot row*/
 	    if (notInPivot(pivot,col,i)) {
-		pivot[col]=i; 
-		break; 
+		pivot[col]=i;
+		break;
 	    }
 	p1=planescopy+i*(d+1)+col;               /* search subsequent pivot row */
 	d3=fabs(d1=*p1);
-	for (; i<=LastPlane_; i++, p1+=(d+1))  
+	for (; i<=LastPlane_; i++, p1+=(d+1))
 	    if (notInPivot(pivot,col,i)) {
 	        d2=fabs(*(p1));
 #if PIVOTING_LASS == 0
 		if (d2>=MIN_PIVOT_LASS) {
-		    pivot[col]=i; 
+		    pivot[col]=i;
 		    d1=*p1;
-		    break; 
+		    break;
 		}
 #endif
 		if (d2>d3) {
@@ -270,13 +270,13 @@ static void shift_P(rational *A, int LastPlane_, int d)
 	for (j=i+1; j<d; j++, p2++)
 	    *(p1)-= (*p2)*(*(planescopy+pivot[j]*(d+1)+d));
     }
- 
+
     /* compute shifted b  */
 
     for (i=0; i<=LastPlane_; i++) {
         p1=A+i*(d+1);
         p2=p1+d;
-	if (notInPivot(pivot,d,i)) 
+	if (notInPivot(pivot,d,i))
 	    for (j=0; j<d; j++,p1++) {
 		*p2 -= (*p1)*(*(planescopy+pivot[j]*(d+1)+d));
 	    }
@@ -284,7 +284,7 @@ static void shift_P(rational *A, int LastPlane_, int d)
     }
 }
 
-static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d, 
+static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
                                T_LassInt *Del_index, int Index_needed)
 /* Other (simpler) implementation of version lasserre-v15.
    Finally (up to the sign) identical constraints in A are detected. If they are
@@ -296,11 +296,11 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
     register rational r0, *p1, *p2;
 
     /* find nonzero[][] and maximal elements and normalize */
-  
+
     p1=A;                                  /* begin of first constraint */
     while (row<=(*LastPlane_)) {           /* remove zeros and normalize */
 	r0=0.0;                            /* norm of vector */
-        for (j=0; j<d; j++,p1++) 
+        for (j=0; j<d; j++,p1++)
 	    r0+=(*p1)*(*p1);               /* compute euclidean norm */
         r0=sqrt(r0);
 	if (r0<EPS_NORM) {
@@ -316,12 +316,12 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
 	    p1-=d;
 	    for (j=0; j<=d; j++,p1++)
 		(*p1)*=r0;
-	    row++; 
+	    row++;
 	}
     }
 
     /* detect identical or reverse constraints */
-    
+
     for (row=0; row<(*LastPlane_); row++) {
 	i=row+1;
 	while (i<=*LastPlane_) {        /* test all subsequent rows i if equal to row */
@@ -331,7 +331,7 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
             for (j=0;j<d;j++,p1++,p2++)
 	        r0+=(*p1)*(*p2);        /* cosinus of arc among those two vectors */
 	    if (r0>0) {
-	        /* NEW VERSION of removing constraints */ 
+	        /* NEW VERSION of removing constraints */
 	        if (fabs(r0-1.0)<EPS_NORM) {
 		    if ((*p1)>(*p2)){
 		    	if (Index_needed) add_reduced_index(row, Del_index, All_index);
@@ -340,7 +340,7 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
                     }
 		    else {
 			if (Index_needed) add_reduced_index(i, Del_index, All_index);
-			if (i<(*LastPlane_)) 
+			if (i<(*LastPlane_))
 			    rm_constraint(A, LastPlane_, d,i);
 			else (*LastPlane_)--;
                     }
@@ -350,7 +350,7 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
                 /* OLD VERSION :
 	        if ((fabs(r0-1.0)<EPS_NORM) && (fabs((*p1)-(*p2))<EPS1)){
 		    if (Index_needed) add_reduced_index(i, Del_index, All_index);
-		    if (i<(*LastPlane_)) 
+		    if (i<(*LastPlane_))
 			rm_constraint(A, LastPlane_, d,i);
 		    else (*LastPlane_)--;
                 }
@@ -360,10 +360,10 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
 	    else {
 	        if (fabs(r0+1.0)<EPS_NORM){
 		    if ((*p1)>0){
-		        if ((*p2)<(EPS1-(*p1))) return 1; 
+		        if ((*p2)<(EPS1-(*p1))) return 1;
 		     }
 		     else {
-		         if ((*p1)<(EPS1-(*p2))) return 1; 
+		         if ((*p1)<(EPS1-(*p2))) return 1;
 		     }
 		}
 	        i++;
@@ -377,7 +377,7 @@ static int norm_and_clean_constraints(rational* A, int *LastPlane_, int d,
 rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
 {   int i, j, k, l, m, n;
     int *pcol,  /* pivot columns */
-        *dcol,  /* determinant columns */ 
+        *dcol,  /* determinant columns */
         *frow;  /* fixed constraints (rows) */
     rational **Ascale; /* contains complete rows of scaling matrix */
     rational **Adet; /* contains square scaling matrix */
@@ -391,7 +391,7 @@ rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
 
     /* extract index sets where projection on differing subspaces happened */
 
-    j=l=m=n=0; 
+    j=l=m=n=0;
     for (i=0; i<G_d; i++){
         while (fvTree[j]<i) j++;
 	if (fvTree[j]>i) { /* i is not in fvTree */
@@ -420,7 +420,7 @@ rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
 	exit(1);
     };
 
-    if (n==0) return 1; /* projection was done on the same subspace */ 
+    if (n==0) return 1; /* projection was done on the same subspace */
 
     /* Build Ascale and inverte right half by left half */
 
@@ -443,7 +443,7 @@ rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
     for (i=0; i<n; i++)
         for (j=0; j<n; j++)
             Adet[i][j]=Ascale[frow[i]][dcol[j]];
-    
+
     if (n==1) { /* here the determinant is trivial */
         return 1/fabs(Adet[0][0]);
     }
@@ -454,7 +454,7 @@ rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
     for (i=0; i<n-1; i++){
         j=0;                     /* search for pivot column */
 	while (pcol[j]>=0) j++;
-	for (k=j+1; k<n; k++) { 
+	for (k=j+1; k<n; k++) {
 	    if (pcol[k]>=0) continue;
 	    if (fabs(Adet[i][k])>fabs(Adet[i][j])) j=k;
 	};
@@ -465,13 +465,13 @@ rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
                     Adet[k][l] -= Adet[i][l]/Adet[i][j]*Adet[k][j];
 	    }
     };
-    
+
     r1=1;
     for (i=0; i<n; i++) {
         if (pcol[i]>=0) r1*=Adet[pcol[i]][i];
 	else r1*=Adet[n-1][i];
     }
-	 
+
 	 free_int_vector (pcol, dimdiff);
 	 free_int_vector (dcol, dimdiff);
 	 free_int_vector (frow, dimdiff);
@@ -482,7 +482,7 @@ rational scale(int dimdiff, T_LassInt *fvTree, T_LassInt * fvNew)
 }
 
 
-static rational lass(rational *A, int LastPlane_, int d)
+rational lass(rational *A, int LastPlane_, int d)
 /* A has exact dimension (LastPlane_+1)*(d+1). The function returns
    the volume; an underscore is appended to LastPlane_ and d */
 
@@ -505,7 +505,7 @@ static rational lass(rational *A, int LastPlane_, int d)
 	    #ifdef STATISTICS
 		Stat_CountRetrieved [d] ++;
 	    #endif
-	    return (*volume)*scale(dimdiff, 
+	    return (*volume)*scale(dimdiff,
 	                           keyfound->hypervar.variables,
 				   key.hypervar.variables);
 	}
@@ -522,10 +522,10 @@ static rational lass(rational *A, int LastPlane_, int d)
     if (d == 1) {
 	ma=-MAXIMUM;
 	mi= MAXIMUM;
-	for (i=0; i<=LastPlane_; i++,A+=2) { 
+	for (i=0; i<=LastPlane_; i++,A+=2) {
 	    if (*A>EPSILON_LASS) { if ((*(A+1)/ *A)<mi) mi=(*(A+1)/ *A); }
-	    else if (*A<-EPSILON_LASS) { if ((*(A+1)/ *A)>ma) ma=*(A+1)/ *A; } 
-            else if ((*(A+1))<-(100000*EPSILON_LASS)) return 0; 
+	    else if (*A<-EPSILON_LASS) { if ((*(A+1)/ *A)>ma) ma=*(A+1)/ *A; }
+            else if ((*(A+1))<-(100000*EPSILON_LASS)) return 0;
 	}
 	if ((ma<-.5*MAXIMUM)||(mi>.5*MAXIMUM)) {
 	    printf("\nVolume is unbounded!\n");
@@ -576,16 +576,16 @@ static rational lass(rational *A, int LastPlane_, int d)
 #else
     for (row=0; row<=LastPlane_; row++) {
 #endif
-	if (fabs(*(A+row*(d+1)+d))<EPSILON_LASS) 
+	if (fabs(*(A+row*(d+1)+d))<EPSILON_LASS)
             continue;                        /* skip this constraint if b_row == 0 */
 	if (Index_needed)
 	{  baserow=add_reduced_index(row, NULL, All_index);
            p2c[G_d-d][1] = baserow;
 	   add_hypervar (baserow, G_d+1, &key);
-	}	
+	}
 	memcpy(&pivotrow[0], A+row*(d+1), sizeof(rational)*(d+1));
 	col=0;                               /* search for pivot column */
-	for (i=0; i<d; i++) {        
+	for (i=0; i<d; i++) {
 #if PIVOTING_LASS == 0
 	    if (fabs(pivotrow[i])>=MIN_PIVOT_LASS) {col=i; break;};
 #endif
@@ -598,7 +598,7 @@ static rational lass(rational *A, int LastPlane_, int d)
 	}
 
         /* copy A onto redA and at the same time perform pivoting */
-	 
+
 	mi=1.0/pivotrow[col];
 	for (i=0; i<=d; i++) pivotrow[i]*=mi;
 	realp1=A;
@@ -630,12 +630,12 @@ static rational lass(rational *A, int LastPlane_, int d)
 	   delete_hypervar (G_m+1, basecol, &key);
 	}
         #ifdef verboseFirstLevel
-            if (d==G_d) 
+            if (d==G_d)
 	        printf("\nVolume accumulated to iteration %i is %20.12f",row,ma );
         #endif
     };
     my_free (redA, LastPlane_* d * sizeof (rational));
-    label2: 
+    label2:
     if (Index_needed) {
 	del_original_indices(Del_index, All_index);
         my_free (Del_index, (LastPlane_ + 2) * sizeof (T_LassInt));

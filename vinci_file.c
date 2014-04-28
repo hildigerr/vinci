@@ -26,11 +26,11 @@
 FILE * open_read (char filename [255])
    /* opens the specified file, reads all lines up to a line 'begin' and returns a      */
    /* pointer to the file */
-   
+
 {  FILE    *fp;
    char    line [255];
    boolean begin_found = FALSE;
-   
+
 
    if (! (fp = fopen (filename, "r")))
    {  fprintf (stderr, "\n***** ERROR: Could not open file '%s' in 'open_read'.\n", filename);
@@ -47,17 +47,17 @@ FILE * open_read (char filename [255])
    };
    return fp;
 }
-   
+
 /****************************************************************************************/
 
 int determine_data_type (char *data_type)
    /* returns the integer code for the data type written in "data_type"                 */
-   
+
 {
    if (!strcmp (data_type, "integer"))
-      return INTEGER_T;
+      return INT_T;
    else if (!strcmp (data_type, "real"))
-      return REAL_T;
+      return REA_T;
    else if (!strcmp (data_type, "rational"))
       return RATIONAL_T;
    else
@@ -165,7 +165,7 @@ void read_vertices (char filename [255])
    {  v = create_vertex ();
       fscanf (f, "%*i "); /* skips the entry one */
       v -> no = i; /* this assures v to be added at the end of the list */
-      if (data_type == REAL_T)
+      if (data_type == REA_T)
          for (j = 0; j < G_d; j++)
             fscanf (f, "%lg ", &(v -> coords [j]));
       else
@@ -206,7 +206,7 @@ void read_hyperplanes (char filename [255])
 
    create_hyperplanes ();
 
-   if (data_type == REAL_T)
+   if (data_type == REA_T)
       for (i = 0; i < G_m; i++)
       {  fscanf (f, "%le ", &(G_Hyperplanes [i] [G_d]));
          for (j = 0; j < G_d; j++)

@@ -113,8 +113,8 @@
 #define EOLN 10           /* end of line character */
 
 #define NONE       0      /* constants for data types in files */
-#define INTEGER_T  1
-#define REAL_T     2
+#define INT_T      1
+#define REA_T      2
 #define RATIONAL_T 3
 
 #define RCH    1          /* constants for the volume computation methods */
@@ -342,8 +342,8 @@ void volume_lrs_file (rational *volume, char *rational_volume, char *vertexfile)
 /****************************************************************************************/
 
 void volume_lasserre_file (rational *volume, char *planesfile);
-static rational * compact();
-static rational lass(rational *A, int LastPlane_, int d);
+rational * compact();
+rational lass(rational *A, int LastPlane_, int d);
 
 /****************************************************************************************/
 /*                   functions and procedures from 'vinci_screen'                       */
