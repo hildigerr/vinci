@@ -31,7 +31,7 @@
                              the rhs zero if there are less than d-LaShift zeros */
 /* #define ReverseLass */ /* perform recursion from last to first constraint;
                              if undefined the recursion starts with the first constraint */
-#define verboseFirstLevel /* output the intermediate volume of the first level */
+/* #define verboseFirstLevel */ /* output the intermediate volume of the first level */
 
 
 /******************/
